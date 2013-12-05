@@ -8,7 +8,38 @@
         <meta name="viewport" content="width=device-width">
 
 		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.css">
+        <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shThemeDefault.css">
+        
+
 		<style type="text/css">
+			.bs-docs-example {
+                position: relative;
+                margin: 15px 0;
+                padding: 39px 19px 14px;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                -webkit-border-radius: 4px;
+                -moz-border-radius: 4px;
+                border-radius: 4px;
+            }
+
+            .bs-docs-example:after {
+                content: "Example";
+                position: absolute;
+                top: -1px;
+                left: -1px;
+                padding: 3px 7px;
+                font-size: 12px;
+                font-weight: bold;
+                background-color: #f5f5f5;
+                border: 1px solid #ddd;
+                color: #9da0a4;
+                -webkit-border-radius: 4px 0 4px 0;
+                -moz-border-radius: 4px 0 4px 0;
+                border-radius: 4px 0 4px 0;
+            }
+
 			.dn-timepicker-popup {
 	            max-height: 300px;
 	            overflow-y: scroll;
@@ -23,14 +54,39 @@
 
             <p>This directive creates a simple dropdown style timepicker, like the one used in Google Calendar.</p>
 
-			<div>
+            <h4>Basic</h4>
+			<div class="bs-docs-example">
 				<input type="text" dn-timepicker ng-model="time" />
 				<p>Selected time: {{time | date:'h:mm a'}}</p>
 			</div>
+			<h6>Code</h6>
+			<pre class="brush: xml">&lt;input type="text" dn-timepicker ng-model="time" /&gt;</pre>
+
+			<h4>Range</h4>
+			<div class="bs-docs-example">
+				<input type="text" dn-timepicker ng-model="time2" min-time="9:00" max-time="17:00" step="10m"/>
+				<p>Selected time: {{time2 | date:'h:mm a'}}</p>
+			</div>
+			<h6>Code</h6>
+			<pre class="brush: xml">&lt;input type="text" dn-timepicker ng-model="time" min-time="9:00" max-time="17:00" step="10m" /&gt;</pre>
+
+			<h4>Formatting</h4>
+			<div class="bs-docs-example">
+				<input type="text" dn-timepicker ng-model="time3" min-time="9:00 am" max-time="9:00 pm" step="10m" time-format="HH:mm" />
+				<p>Selected time: {{time3 | date:'h:mm a'}}</p>
+			</div>
+			<h6>Code</h6>
+			<pre class="brush: xml">&lt;input type="text" dn-timepicker ng-model="time" min-time="9:00" max-time="17:00" step="10m" time-format="HH:mm" /&gt;</pre>
 		</div>
 
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.3.0/ui-bootstrap.min.js"></script>
 		<script src="angular.timepicker.js"></script>
+
+		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.js"></script>
+        <script type="text/javascript">
+	        SyntaxHighlighter.all();
+	    </script>
 	</body>
 </html>
