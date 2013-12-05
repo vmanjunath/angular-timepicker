@@ -60,7 +60,8 @@ angular.module('dnTimePicker', ['ui.bootstrap'])
                     if(!t) return null;
 
                     var hours = parseInt(t[1]);
-                    d.setHours(hours + (hours == 12 ? (t[3] ? (t[3].toLowerCase() == 'p' ? 0 : -12) : 0) : (t[3] ? 12 : 0)));
+                    
+                    d.setHours(hours + (hours == 12 ? (t[3] ? (t[3].toLowerCase() == 'p' ? 0 : -12) : 0) : (t[3].toLowerCase() == 'p' ? 12 : 0)));
                     d.setMinutes(parseInt(t[2]) || 0);
                     d.setSeconds(0);
 
