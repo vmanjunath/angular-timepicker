@@ -1,5 +1,5 @@
 /* 
- *   Angular Timepicker
+ *   Angular Timepicker 1.0.0
  *   https://github.com/dnasir/angular-timepicker
  *
  *   Copyright 2013, Dzulqarnain Nasir
