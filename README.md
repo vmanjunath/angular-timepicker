@@ -2,6 +2,8 @@
 
 A simple dropdown style timepicker directive.
 
+[Demo](http://www.dnasir.com/github/angular-timepicker/demo.html)
+
 ## Prerequisites
 
 1. Angular 1.2.0+
