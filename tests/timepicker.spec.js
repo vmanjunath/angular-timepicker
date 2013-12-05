@@ -26,6 +26,8 @@ describe('Timepicker directive', function() {
 		var converted1 = directiveScope.stringToDate('9:15');
 		var converted2 = directiveScope.stringToDate('12:15 am');
 		var converted3 = directiveScope.stringToDate('12:15 pm');
+		var converted4 = directiveScope.stringToDate('9:15 am');
+		var converted5 = directiveScope.stringToDate('9:15 pm');
 
 		date.setHours(9);
 		date.setMinutes(15);
@@ -38,6 +40,12 @@ describe('Timepicker directive', function() {
 
 		date.setHours(12);
 		expect(converted3.getTime() == date.getTime()).toBe(true);
+
+		date.setHours(9);
+		expect(converted4.getTime() == date.getTime()).toBe(true);
+
+		date.setHours(21);
+		expect(converted5.getTime() == date.getTime()).toBe(true);
 	});
 
 	it('should build a list of selectable time', function() {
