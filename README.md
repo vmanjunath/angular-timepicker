@@ -23,6 +23,14 @@ The model that the timepicker is bound to. If no model is given, it will create 
 
 <sub>Added: 1.0.0</sub>
 
+#### time-format (string)
+
+The format to use when displaying the time in the input box and the dropdown list.
+
+    Default value: 'h:mm a'
+
+<sub>Added: 1.0.0</sub>
+
 #### min-time (string)
 
 The lower limit for the list of selectable times.
@@ -35,7 +43,7 @@ The lower limit for the list of selectable times.
 
 The upper limit for the list of selectable time.
 
-    Default value: '23:55'
+    Default value: '23:59'
 
 <sub>Added: 1.0.0</sub>
 
@@ -43,6 +51,6 @@ The upper limit for the list of selectable time.
 
 The amount of time between each item in the list of selectable time.
 
-    Default value: '1h'
+    Default value: '15m'
 
 <sub>Added: 1.0.0</sub>
