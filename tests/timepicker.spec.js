@@ -6,7 +6,7 @@ describe('Timepicker directive', function() {
 	beforeEach(inject(function($rootScope, $compile) {
 		$scope = $rootScope.$new();
 
-		element = angular.element('<input type="text" dn-timepicker min-time="12:00" max-time="13:00" step="15m" ng-model="time">');
+		element = angular.element('<input type="text" dn-timepicker ng-model="time">');
 
 		$compile(element)($scope);
 
@@ -20,28 +20,25 @@ describe('Timepicker directive', function() {
 	});
 
 	it('should convert time string to Date object', function() {
-		var date = new Date();
-		date.setHours(12);
-		date.setMinutes(15);
+		var date = new Date();		
 		date.setSeconds(0);
 
-		var converted = directiveScope.stringToDate('12:15');
+		var converted1 = directiveScope.stringToDate('9:15');
+		var converted2 = directiveScope.stringToDate('12:15 am');
+		var converted3 = directiveScope.stringToDate('12:15 pm');
 
-		expect(converted instanceof Date).toBe(true);
-		expect(converted.getTime() == date.getTime()).toBe(true);
+		date.setHours(9);
+		date.setMinutes(15);
+
+		expect(converted1 instanceof Date).toBe(true);
+		expect(converted1.getTime() == date.getTime()).toBe(true);
+
+		date.setHours(0);
+		expect(converted2.getTime() == date.getTime()).toBe(true);
+
+		date.setHours(12);
+		expect(converted3.getTime() == date.getTime()).toBe(true);
 	});
-
-	it('should convert Date object to time string', function() {
-		var date = new Date();
-		date.setHours(12);
-		date.setMinutes(15);
-		date.setSeconds(0);
-
-		var converted = directiveScope.dateToString(date);
-
-		expect(typeof converted === 'string').toBe(true);
-		expect(converted === '12:15').toBe(true);
-	})
 
 	it('should build a list of selectable time', function() {
 		var minTime = directiveScope.stringToDate('12:00');
@@ -51,4 +48,4 @@ describe('Timepicker directive', function() {
 
 		expect(timeList.length).toBe(5);
 	});
-})
+});
