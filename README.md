@@ -5,7 +5,7 @@ A simple dropdown style timepicker directive.
 ## Prerequisites
 
 1. Angular 1.2.0+
-2. Angular UI Bootstrap 0.3.0+
+2. Angular UI Bootstrap 0.3.0+ ($position service)
  
 ## Usage
 
