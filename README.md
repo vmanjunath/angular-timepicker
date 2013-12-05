@@ -15,7 +15,7 @@ Include the timepicker directive file, and attach it to an input field.
     
 ## Options
 
-#### ng-model
+#### ng-model (Date)
 
 The model that the timepicker is bound to. If no model is given, it will create a new one.
 
@@ -23,7 +23,7 @@ The model that the timepicker is bound to. If no model is given, it will create 
 
 <sub>Added: 1.0.0</sub>
 
-#### min-time
+#### min-time (string)
 
 The lower limit for the list of selectable times.
 
@@ -31,7 +31,7 @@ The lower limit for the list of selectable times.
 
 <sub>Added: 1.0.0</sub>
 
-#### max-time
+#### max-time (string)
 
 The upper limit for the list of selectable time.
 
@@ -39,7 +39,7 @@ The upper limit for the list of selectable time.
 
 <sub>Added: 1.0.0</sub>
 
-#### step
+#### step (string)
 
 The amount of time between each item in the list of selectable time.
 
