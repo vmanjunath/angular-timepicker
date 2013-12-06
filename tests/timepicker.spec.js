@@ -56,4 +56,17 @@ describe('Timepicker directive', function() {
 
 		expect(timeList.length).toBe(5);
 	});
+
+	it('should only update the time properties of the model', function() {
+		$scope.time = new Date(2012, 11, 15, 13, 30, 0);
+		$scope.$apply();
+
+		var updatedTime = new Date(2013, 11, 6, 14, 45, 0);
+
+		directiveScope.update(updatedTime);
+
+		expect($scope.time.getTime() == updatedTime.getTime()).toBe(false);
+		expect($scope.time.getHours() == updatedTime.getHours()).toBe(true);
+		expect($scope.time.getMinutes() == updatedTime.getMinutes()).toBe(true);
+	});
 });
