@@ -82,7 +82,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                     }
 
                     return result;
-                }
+                };
 
                 // Local variables
                 var minTime = scope.stringToDate(attrs.minTime) || scope.stringToDate('00:00'),
@@ -110,12 +110,13 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                 // Update the current selected time
                 // (Date) value
                 scope.update = function(value) {
-                    if(+current == +value) return;
+                    if(!value) return;
 
-                    current = value;
+                    current.setHours(value.getHours());
+                    current.setMinutes(value.getMinutes());
+                    current.setSeconds(value.getSeconds());
 
-                    scope.model.setHours(value.getHours());
-                    scope.model.setMinutes(value.getMinutes());
+                    scope.model = current;
 
                     ngModel.$render();
                 };
@@ -123,7 +124,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                 ngModel.$render = function() {
                     var timeString = ngModel.$viewValue ? $filter('date')(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
                     element.val(timeString);
-                }
+                };
 
                 // Checks for current active item
                 // (int) index
@@ -192,6 +193,8 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                 if(!(scope.model instanceof Date)) {
                     scope.model = new Date();
                 }
+
+                current = scope.model;
 
                 // Set initial selected item
                 scope.timepicker.activeIdx = getClosestIndex(scope.model, scope.timepicker.optionList);
