@@ -1,9 +1,9 @@
 /* 
  *   Angular Timepicker 1.0.2
- *   https://github.com/dnasir/angular-timepicker
+ *   https://github.com/Geta/angular-timepicker
  *
- *   Copyright 2013, Dzulqarnain Nasir
- *   http://dnasir.com
+ *   Copyright 2013, Geta AS
+ *   Author: Dzulqarnain Nasir
  *
  *   Licensed under the MIT license:
  *   http://www.opensource.org/licenses/MIT
