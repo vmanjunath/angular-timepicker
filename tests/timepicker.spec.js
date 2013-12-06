@@ -64,6 +64,7 @@ describe('Timepicker directive', function() {
 		var updatedTime = new Date(2013, 11, 6, 14, 45, 0);
 
 		directiveScope.update(updatedTime);
+		$scope.$apply();
 
 		expect($scope.time.getTime() == updatedTime.getTime()).toBe(false);
 		expect($scope.time.getHours() == updatedTime.getHours()).toBe(true);
