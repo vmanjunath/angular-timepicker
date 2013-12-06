@@ -1,7 +1,7 @@
 describe('Timepicker directive', function() {
 	var $scope, element, directiveScope;
 
-	beforeEach(module('dnTimePicker'));
+	beforeEach(module('dnTimepicker'));
 
 	beforeEach(inject(function($rootScope, $compile) {
 		$scope = $rootScope.$new();

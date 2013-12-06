@@ -1,5 +1,5 @@
 /* 
- *   Angular Timepicker 1.0.1
+ *   Angular Timepicker 1.0.2
  *   https://github.com/dnasir/angular-timepicker
  *
  *   Copyright 2013, Dzulqarnain Nasir
@@ -9,7 +9,7 @@
  *   http://www.opensource.org/licenses/MIT
  */
 
-angular.module('dnTimePicker', ['ui.bootstrap'])
+angular.module('dnTimepicker', ['ui.bootstrap'])
     .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', '$filter', function($compile, $parse, $position, $document, $filter) {
 
         // Converts step to minutes
