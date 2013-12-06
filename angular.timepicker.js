@@ -1,5 +1,5 @@
 /* 
- *   Angular Timepicker 1.0.0
+ *   Angular Timepicker 1.0.1
  *   https://github.com/dnasir/angular-timepicker
  *
  *   Copyright 2013, Dzulqarnain Nasir
@@ -110,9 +110,14 @@ angular.module('dnTimePicker', ['ui.bootstrap'])
                 // Update the current selected time
                 // (Date) value
                 scope.update = function(value) {
+                    if(+current == +value) return;
+
                     current = value;
 
-                    scope.model = value;
+                    scope.model.setHours(value.getHours());
+                    scope.model.setMinutes(value.getMinutes());
+
+                    ngModel.$render();
                 };
 
                 ngModel.$render = function() {
@@ -149,7 +154,8 @@ angular.module('dnTimePicker', ['ui.bootstrap'])
 
                     // Scroll to selected
                     if (scope.timepicker.element && scope.timepicker.activeIdx > -1) {
-                        scope.timepicker.element[0].querySelector('.active').scrollIntoView(true);
+                        var target = scope.timepicker.element[0].querySelector('.active');
+                        target.parentNode.scrollTop = target.offsetTop;
                     }
                 };
 
@@ -184,7 +190,7 @@ angular.module('dnTimePicker', ['ui.bootstrap'])
 
                 // Set initial value
                 if(!(scope.model instanceof Date)) {
-                    scope.update(new Date());
+                    scope.model = new Date();
                 }
 
                 // Set initial selected item
