@@ -1,5 +1,5 @@
 /* 
- *   Angular Timepicker 1.0.2
+ *   Angular Timepicker 1.0.3
  *   https://github.com/Geta/angular-timepicker
  *
  *   Copyright 2013, Geta AS
@@ -179,7 +179,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                         scope.$apply();
                     });
 
-                $document.bind('click', function() {
+                $document.bind('click', function(event) {
                     if (scope.timepicker.isOpen && event.target !== element[0]) {
                         scope.timepicker.isOpen = false;
                         scope.$apply();
