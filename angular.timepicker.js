@@ -1,5 +1,5 @@
 /* 
- *   Angular Timepicker 1.0.3
+ *   Angular Timepicker 1.0.4
  *   https://github.com/Geta/angular-timepicker
  *
  *   Copyright 2013, Geta AS
@@ -87,7 +87,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                 // Local variables
                 var minTime = scope.stringToDate(attrs.minTime) || scope.stringToDate('00:00'),
                     maxTime = scope.stringToDate(attrs.maxTime) || scope.stringToDate('23:59'),
-                    step = stringToMinutes(attrs.step || '15m'),
+                    step = stringToMinutes(attrs.step) || 15,
                     current = null;
 
                 scope.timepicker = {
@@ -187,7 +187,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                 });
 
                 // Append timepicker dropdown
-                element.after($compile(angular.element('<dn-timepicker-popup></dn-timepicker-popup>'))(scope));
+                element.after($compile(angular.element('<div dn-timepicker-popup></div>'))(scope));
 
                 // Set initial value
                 if(!(scope.model instanceof Date)) {
@@ -204,7 +204,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
     }])
     .directive('dnTimepickerPopup', [function() {
         return {
-            restrict: 'E',
+            restrict: 'A',
             replace: true,
             transclude: false,
             template: '<ul class="dn-timepicker-popup dropdown-menu" ng-style="{display: timepicker.isOpen && \'block\' || \'none\', top: position.top+\'px\', left: position.left+\'px\'}">\

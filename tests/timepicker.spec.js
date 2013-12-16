@@ -17,6 +17,7 @@ describe('Timepicker directive', function() {
 
 	it('should set model value to current date if none given', function() {
 		expect($scope.time).toBeTruthy();
+		expect($scope.time instanceof Date).toBe(true);
 	});
 
 	it('should convert time string to Date object', function() {
@@ -55,6 +56,16 @@ describe('Timepicker directive', function() {
 		var timeList = directiveScope.buildTimeList(minTime, maxTime, 15);
 
 		expect(timeList.length).toBe(5);
+		expect(timeList[0].getHours()).toBe(12);
+		expect(timeList[0].getMinutes()).toBe(0);
+		expect(timeList[1].getHours()).toBe(12);
+		expect(timeList[1].getMinutes()).toBe(15);
+		expect(timeList[2].getHours()).toBe(12);
+		expect(timeList[2].getMinutes()).toBe(30);
+		expect(timeList[3].getHours()).toBe(12);
+		expect(timeList[3].getMinutes()).toBe(45);
+		expect(timeList[4].getHours()).toBe(13);
+		expect(timeList[4].getMinutes()).toBe(0);
 	});
 
 	it('should only update the time properties of the model', function() {
