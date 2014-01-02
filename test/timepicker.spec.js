@@ -1,12 +1,6 @@
 describe('Timepicker directive', function() {
-	var $scope, $compile, element, directiveScope;
 
 	beforeEach(module('dnTimepicker'));
-
-	beforeEach(inject(function(_$rootScope_, _$compile_) {
-        $scope = _$rootScope_;
-        $compile = _$compile_;
-    }));
 
 	// beforeEach(inject(function($rootScope, $compile) {
 	// 	$scope = $rootScope.$new();
@@ -21,12 +15,22 @@ describe('Timepicker directive', function() {
 	// 	directiveScope = element.isolateScope();
 	// }));
 
-	describe('core function test', function() {
-		it('should build a list of selectable time', inject(function($dateParser) {
+	describe('helper function test', function() {
+		it('should convert string to minutes', inject(function(dnTimepickerHelpers) {
+			var str1 = '1h',
+				str2 = '30m',
+				str3 = '30';
+
+			expect(dnTimepickerHelpers.stringToMinutes(str1)).toBe(60);
+			expect(dnTimepickerHelpers.stringToMinutes(str2)).toBe(30);
+			expect(dnTimepickerHelpers.stringToMinutes(str3)).toBe(30);
+		}));
+
+		it('should build a list of selectable time', inject(function($dateParser, dnTimepickerHelpers) {
 			var minTime = $dateParser('12:00', 'HH:mm');
 			var maxTime = $dateParser('13:00', 'HH:mm');
 
-			var timeList = directiveScope.buildTimeList(minTime, maxTime, 15);
+			var timeList = dnTimepickerHelpers.buildOptionList(minTime, maxTime, 15);
 
 			expect(timeList.length).toBe(5);
 			expect(timeList[0].getHours()).toBe(12);
@@ -40,6 +44,45 @@ describe('Timepicker directive', function() {
 			expect(timeList[4].getHours()).toBe(13);
 			expect(timeList[4].getMinutes()).toBe(0);
 		}));
+
+		it('should return closest index', inject(function($dateParser, dnTimepickerHelpers) {
+			var minTime = $dateParser('12:00', 'HH:mm');
+			var maxTime = $dateParser('13:00', 'HH:mm');
+
+			var timeList = dnTimepickerHelpers.buildOptionList(minTime, maxTime, 15);
+
+			var testTime1 = $dateParser('12:36', 'HH:mm'),
+				testTime2 = $dateParser('12:01', 'HH:mm'),
+				testTime3 = $dateParser('12:59', 'HH:mm');
+
+			expect(dnTimepickerHelpers.getClosestIndex(testTime1, timeList)).toBe(2);
+			expect(dnTimepickerHelpers.getClosestIndex(testTime2, timeList)).toBe(0);
+			expect(dnTimepickerHelpers.getClosestIndex(testTime3, timeList)).toBe(4);
+		}));
+	});
+
+	describe('UI function test', function() {
+		var $scope, $compile, element, directiveScope;
+
+		beforeEach(inject(function(_$rootScope_, _$compile_) {
+	        $scope = _$rootScope_;
+	        $compile = _$compile_;
+
+	        element = angular.element('<input type="text" dn-timepicker="HH:mm" ng-model="time">');
+
+			$compile(element)($scope);
+
+			$scope.$digest();
+
+			//directiveScope = element.isolateScope();
+	    }));
+
+		it('should have a list of selectable time', function() {
+			var list = element.next();
+
+			expect(list.hasClass('dn-timepicker-popup')).toBe(true);
+			expect(list.children().length).toBeTruthy();
+		});
 	});
 
 	// it('should set model value to current date if none given', function() {
