@@ -9,37 +9,80 @@
  *   http://www.opensource.org/licenses/MIT
  */
 
-angular.module('dnTimepicker', ['ui.bootstrap'])
-    .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', '$filter', function($compile, $parse, $position, $document, $filter) {
+angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
+    .factory('dnTimepickerHelpers', function() {
+        return {
+            stringToMinutes: function(str) {
+                if(!str) return null;
 
-        // Converts step to minutes
-        // (string) step
-        function stringToMinutes(step) {
-            var t = step.match(/(\d+)(h?)/);
-            return t[1] * (t[2] ? 60 : 1);
-        }
+                var t = str.match(/(\d+)(h?)/);
+                return t[1] * (t[2] ? 60 : 1);
+            },
 
-        // Fetches the index for the closest value in the array
-        // (object) value
-        // (array) from
-        function getClosestIndex(value, from) {
-            if(!value) return -1;
+            getClosestIndex: function(value, from) {
+                if(!value) return -1;
             
-            var closest = null;
-            var index = -1;
+                var closest = null;
+                var index = -1;
 
-            var _value = value.getHours() * 60 + value.getMinutes();
-            for (var i = 0; i < from.length; i++) {
-                var current = from[i];
-                var _current = current.getHours() * 60 + current.getMinutes();
+                var _value = value.getHours() * 60 + value.getMinutes();
+                for (var i = 0; i < from.length; i++) {
+                    var current = from[i];
+                    var _current = current.getHours() * 60 + current.getMinutes();
 
-                if (closest === null || Math.abs(_current - _value) < Math.abs(closest - _value)) {
-                    closest = _current;
-                    index = i;
+                    if (closest === null || Math.abs(_current - _value) < Math.abs(closest - _value)) {
+                        closest = _current;
+                        index = i;
+                    }
                 }
+                return index;
+            },
+
+            buildTimeList: function(minTime, maxTime, step) {
+                var result = [];
+
+                var i = minTime;
+                while (i <= maxTime) {
+                    result.push(new Date(i));
+                    i.setMinutes(i.getMinutes() + step);
+                }
+
+                return result;
             }
-            return index;
         }
+    })
+    .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', 'dateFilter', '$dateParser', function($compile, $parse, $position, $document, dateFilter, $dateParser) {
+
+        // // Converts step to minutes
+        // // (string) step
+        // function stringToMinutes(step) {
+        //     if(!step) return null;
+
+        //     var t = step.match(/(\d+)(h?)/);
+        //     return t[1] * (t[2] ? 60 : 1);
+        // }
+
+        // // Fetches the index for the closest value in the array
+        // // (object) value
+        // // (array) from
+        // function getClosestIndex(value, from) {
+        //     if(!value) return -1;
+            
+        //     var closest = null;
+        //     var index = -1;
+
+        //     var _value = value.getHours() * 60 + value.getMinutes();
+        //     for (var i = 0; i < from.length; i++) {
+        //         var current = from[i];
+        //         var _current = current.getHours() * 60 + current.getMinutes();
+
+        //         if (closest === null || Math.abs(_current - _value) < Math.abs(closest - _value)) {
+        //             closest = _current;
+        //             index = i;
+        //         }
+        //     }
+        //     return index;
+        // }
 
         return {
             restrict: 'A',
@@ -122,7 +165,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                 };
 
                 ngModel.$render = function() {
-                    var timeString = ngModel.$viewValue ? $filter('date')(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
+                    var timeString = ngModel.$viewValue ? dateFilter(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
                     element.val(timeString);
                 };
 
@@ -169,7 +212,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                         var time = scope.stringToDate(element.val());
 
                         // If the manually entered time is not valid, update it with last valid value
-                        if(time instanceof Date) {
+                        if(angular.isDate(time)) {
                             scope.update(time);
                         } else {
                             scope.update(current);
@@ -190,7 +233,7 @@ angular.module('dnTimepicker', ['ui.bootstrap'])
                 element.after($compile(angular.element('<div dn-timepicker-popup></div>'))(scope));
 
                 // Set initial value
-                if(!(scope.model instanceof Date)) {
+                if(!angular.isDate(scope.model)) {
                     scope.model = new Date();
                 }
 
