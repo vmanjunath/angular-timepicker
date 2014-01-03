@@ -92,7 +92,7 @@ describe('Timepicker directive', function() {
 			expect($scope.models.time.getMinutes()).toEqual(50);
 		});
 
-		it('should only update the time properties of the model', function() {
+		it('should only update the time properties of the model - manual', function() {
 			$scope.$apply(function() {
 				$scope.models.time = new Date(2012, 11, 15, 13, 30, 0);
 			});
@@ -104,6 +104,20 @@ describe('Timepicker directive', function() {
 			expect($scope.models.time.getDate()).toEqual(15);
 			expect($scope.models.time.getHours()).toEqual(12);
 			expect($scope.models.time.getMinutes()).toEqual(50);
+		});
+
+		it('should only update the time properties of the model - dropdown', function() {
+			$scope.$apply(function() {
+				$scope.models.time = new Date(2012, 11, 15, 13, 30, 0);
+			});
+
+			inputEl.next().find('li')[0].click();
+
+			expect($scope.models.time.getFullYear()).toEqual(2012);
+			expect($scope.models.time.getMonth()).toEqual(11);
+			expect($scope.models.time.getDate()).toEqual(15);
+			expect($scope.models.time.getHours()).toEqual(0);
+			expect($scope.models.time.getMinutes()).toEqual(0);
 		});
 	});
 });

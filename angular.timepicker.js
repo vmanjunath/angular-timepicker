@@ -54,7 +54,6 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
     .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', 'dateFilter', '$dateParser', 'dnTimepickerHelpers', function($compile, $parse, $position, $document, dateFilter, $dateParser, dnTimepickerHelpers) {
         return {
             restrict: 'A',
-            //scope: true,
             require: '?ngModel',
             link: function(originalScope, element, attrs, ngModel) {
                 var scope = originalScope.$new();
@@ -73,6 +72,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     step = 15,
                     current = null;
 
+                // TODO: Fix this so that if minTime, maxTime and step changes, we rebuild the list
                 attrs.$observe('dnTimepicker', function(value) {
                     if(!value) return;
 
@@ -140,9 +140,10 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     var timeString = angular.isDate(ngModel.$viewValue) ? dateFilter(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
                     element.val(timeString);
 
-                    current = ngModel.$modelValue;
+                    if(!isNaN(ngModel.$modelValue)) current = ngModel.$modelValue;
                 };
 
+                // Parses manually entered time
                 var parseDate = function(viewValue) {
                     var date = angular.isDate(viewValue) ? viewValue : $dateParser(viewValue, scope.timepicker.timeFormat);
 
@@ -150,6 +151,14 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                         ngModel.$setValidity('time', false);
                     } else {
                         ngModel.$setValidity('time', true);
+
+                        if(current) {
+                            current.setHours(date.getHours());
+                            current.setMinutes(date.getMinutes());
+                            current.setSeconds(date.getSeconds());
+
+                            return current;
+                        }
                     }
 
                     return date;
@@ -194,20 +203,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 element
                     .bind('focus', function() {
                         scope.openPopup();
-                    })
-                    // .bind('change', function() {
-                    //     var time = stringToDate(element.val());
-
-                    //     // If the manually entered time is not valid, update it with last valid value
-                    //     if(angular.isDate(time)) {
-                    //         scope.update(time);
-                    //     } else {
-                    //         scope.update(current);
-                    //     }
-
-                    //     scope.timepicker.isOpen = false;
-                    //     scope.$apply();
-                    // });
+                    });
 
                 $document.bind('click', function(event) {
                     if (scope.timepicker.isOpen && event.target !== element[0]) {
@@ -223,8 +219,6 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 if(!angular.isDate(ngModel.$modelValue)) {
                     ngModel.$setViewValue(new Date());
                 }
-
-                current = ngModel.$modelValue;
 
                 // Set initial selected item
                 scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList);
