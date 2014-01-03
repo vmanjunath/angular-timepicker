@@ -54,11 +54,10 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
     .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', 'dateFilter', '$dateParser', 'dnTimepickerHelpers', function($compile, $parse, $position, $document, dateFilter, $dateParser, dnTimepickerHelpers) {
         return {
             restrict: 'A',
-            // scope: {
-            //     model: '=ngModel'
-            // },
-            require: 'ngModel',
-            link: function(scope, element, attrs, ngModel) {
+            //scope: true,
+            require: '?ngModel',
+            link: function(originalScope, element, attrs, ngModel) {
+                var scope = originalScope.$new();
 
                 scope.timepicker = {
                     element: null,
@@ -75,127 +74,161 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     current = null;
 
                 attrs.$observe('dnTimepicker', function(value) {
+                    if(!value) return;
+
                     scope.timepicker.timeFormat = value;
+
+                    if(attrs.minTime) {
+                        minTime = $dateParser(attrs.minTime, scope.timepicker.timeFormat);
+                    }
+
+                    if(attrs.maxTime) {
+                        maxTime = $dateParser(attrs.maxTime, scope.timepicker.timeFormat);
+                    }
+
+                    if(attrs.step) {
+                        step = dnTimepickerHelpers.stringToMinutes(attrs.step);
+                    }
+
                     scope.updateOptionList();
+
                     ngModel.$render();
                 });
 
-                attrs.$observe('minTime', function(value) {
-                    minTime = value;
-                    scope.updateOptionList();
-                });
+                // attrs.$observe('minTime', function(value) {
+                //     if(!value) return;
 
-                attrs.$observe('maxTime', function(value) {
-                    maxTime = value;
-                    scope.updateOptionList();
-                });
+                //     minTime = $dateParser(value, scope.timepicker.timeFormat);
+                //     scope.updateOptionList();
+                // });
+
+                // attrs.$observe('maxTime', function(value) {
+                //     if(!value) return;
+
+                //     maxTime = $dateParser(value, scope.timepicker.timeFormat);
+                //     scope.updateOptionList();
+                // });
 
                 scope.updateOptionList = function() {
                     scope.timepicker.optionList = dnTimepickerHelpers.buildOptionList(minTime, maxTime, step);
                 };
                 
 
-                // // Select action handler
-                // // (int) index
-                // scope.select = function(index) {
-                //     scope.update(scope.timepicker.optionList[index]);
+                // Select action handler
+                // (int) index
+                scope.select = function(index) {
+                    scope.update(scope.timepicker.optionList[index]);
 
-                //     // Closes the timepicker
-                //     if (scope.timepicker.isOpen) scope.timepicker.isOpen = false;
-                // };
+                    // Closes the timepicker
+                    if (scope.timepicker.isOpen) scope.timepicker.isOpen = false;
+                };
 
-                // // Update the current selected time
-                // // (Date) value
-                // scope.update = function(value) {
-                //     if(!value) return;
+                // Update the current selected time
+                // (Date) value
+                scope.update = function(value) {
+                    if(!value) return;
 
-                //     current.setHours(value.getHours());
-                //     current.setMinutes(value.getMinutes());
-                //     current.setSeconds(value.getSeconds());
+                    current.setHours(value.getHours());
+                    current.setMinutes(value.getMinutes());
+                    current.setSeconds(value.getSeconds());
 
-                //     scope.model = current;
+                    ngModel.$setViewValue(current);
+                    ngModel.$render();
+                };
 
-                //     ngModel.$render();
-                // };
+                ngModel.$render = function() {
+                    var timeString = angular.isDate(ngModel.$viewValue) ? dateFilter(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
+                    element.val(timeString);
 
-                // ngModel.$render = function() {
-                //     var timeString = ngModel.$viewValue ? dateFilter(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
-                //     element.val(timeString);
-                // };
+                    current = ngModel.$modelValue;
+                };
 
-                // // Checks for current active item
-                // // (int) index
-                // scope.isActive = function(index) {
-                //     return index === scope.timepicker.activeIdx;
-                // };
+                var parseDate = function(viewValue) {
+                    var date = angular.isDate(viewValue) ? viewValue : $dateParser(viewValue, scope.timepicker.timeFormat);
 
-                // // Sets the current active item
-                // // (int) index
-                // scope.setActive = function(index) {
-                //     scope.timepicker.activeIdx = index;
-                // };
+                    if(isNaN(date)) {
+                        ngModel.$setValidity('time', false);
+                    } else {
+                        ngModel.$setValidity('time', true);
+                    }
 
-                // // Opens the timepicker
-                // scope.openPopup = function() {
-                //     // Set position
-                //     scope.position = $position.position(element);
-                //     scope.position.top = scope.position.top + element.prop('offsetHeight');
+                    return date;
+                };
+                ngModel.$parsers.unshift(parseDate);
 
-                //     // Open list
-                //     scope.timepicker.isOpen = true;
+                // Checks for current active item
+                // (int) index
+                scope.isActive = function(index) {
+                    return index === scope.timepicker.activeIdx;
+                };
 
-                //     // Set active item
-                //     scope.timepicker.activeIdx = getClosestIndex(ngModel.$viewValue, scope.timepicker.optionList);
+                // Sets the current active item
+                // (int) index
+                scope.setActive = function(index) {
+                    scope.timepicker.activeIdx = index;
+                };
 
-                //     // Trigger digest
-                //     scope.$digest();
+                // Opens the timepicker
+                scope.openPopup = function() {
+                    // Set position
+                    scope.position = $position.position(element);
+                    scope.position.top = scope.position.top + element.prop('offsetHeight');
 
-                //     // Scroll to selected
-                //     if (scope.timepicker.element && scope.timepicker.activeIdx > -1) {
-                //         var target = scope.timepicker.element[0].querySelector('.active');
-                //         target.parentNode.scrollTop = target.offsetTop;
-                //     }
-                // };
+                    // Open list
+                    scope.timepicker.isOpen = true;
+
+                    // Set active item
+                    scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList);
+
+                    // Trigger digest
+                    scope.$digest();
+
+                    // Scroll to selected
+                    if (scope.timepicker.element && scope.timepicker.activeIdx > -1) {
+                        var target = scope.timepicker.element[0].querySelector('.active');
+                        target.parentNode.scrollTop = target.offsetTop;
+                    }
+                };
 
                 // Set up the element
-                // element
-                //     .bind('focus', function() {
-                //         scope.openPopup();
-                //     })
-                //     .bind('change', function() {
-                //         var time = scope.stringToDate(element.val());
+                element
+                    .bind('focus', function() {
+                        scope.openPopup();
+                    })
+                    // .bind('change', function() {
+                    //     var time = stringToDate(element.val());
 
-                //         // If the manually entered time is not valid, update it with last valid value
-                //         if(angular.isDate(time)) {
-                //             scope.update(time);
-                //         } else {
-                //             scope.update(current);
-                //         }
+                    //     // If the manually entered time is not valid, update it with last valid value
+                    //     if(angular.isDate(time)) {
+                    //         scope.update(time);
+                    //     } else {
+                    //         scope.update(current);
+                    //     }
 
-                //         scope.timepicker.isOpen = false;
-                //         scope.$apply();
-                //     });
+                    //     scope.timepicker.isOpen = false;
+                    //     scope.$apply();
+                    // });
 
-                // $document.bind('click', function(event) {
-                //     if (scope.timepicker.isOpen && event.target !== element[0]) {
-                //         scope.timepicker.isOpen = false;
-                //         scope.$apply();
-                //     }
-                // });
+                $document.bind('click', function(event) {
+                    if (scope.timepicker.isOpen && event.target !== element[0]) {
+                        scope.timepicker.isOpen = false;
+                        scope.$apply();
+                    }
+                });
 
                 // Append timepicker dropdown
                 element.after($compile(angular.element('<div dn-timepicker-popup></div>'))(scope));
 
-                // // Set initial value
-                // if(!angular.isDate(scope.model)) {
-                //     scope.model = new Date();
-                // }
+                // Set initial value
+                if(!angular.isDate(ngModel.$modelValue)) {
+                    ngModel.$setViewValue(new Date());
+                }
 
-                // current = scope.model;
+                current = ngModel.$modelValue;
 
-                // // Set initial selected item
-                // scope.timepicker.activeIdx = getClosestIndex(scope.model, scope.timepicker.optionList);
-                // if (scope.timepicker.activeIdx > -1) scope.select(scope.timepicker.activeIdx);
+                // Set initial selected item
+                scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList);
+                if (scope.timepicker.activeIdx > -1) scope.select(scope.timepicker.activeIdx);
             }
         };
     }])
