@@ -22,7 +22,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
             buildOptionList: function(minTime, maxTime, step) {
                 var result = [];
 
-                var i = minTime;
+                var i = angular.copy(minTime);
                 while (i <= maxTime) {
                     result.push(new Date(i));
                     i.setMinutes(i.getMinutes() + step);
@@ -58,83 +58,100 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
             link: function(originalScope, element, attrs, ngModel) {
                 var scope = originalScope.$new();
 
+                // Local variables
+                // var minTime = $dateParser('12:00 am', scope.timepicker.timeFormat),
+                //     maxTime = $dateParser('11:59 pm', scope.timepicker.timeFormat),
+                //     step = 15
+                var current = null;
+
+                var list = [],
+                    updateList = true;
+
                 scope.timepicker = {
                     element: null,
                     timeFormat: 'h:mm a',
+                    minTime: $dateParser('0:00', 'H:mm'),
+                    maxTime: $dateParser('23:59', 'H:mm'),
+                    step: 15,
                     isOpen: false,
                     activeIdx: -1,
-                    optionList: []
+                    optionList: function() {
+                        if(updateList) {
+                            list = dnTimepickerHelpers.buildOptionList(scope.timepicker.minTime, scope.timepicker.maxTime, scope.timepicker.step);
+                            updateList = false;
+                        }
+                        return list;
+                    }
                 };
 
-                // Local variables
-                var minTime = $dateParser('12:00 am', scope.timepicker.timeFormat),
-                    maxTime = $dateParser('11:59 pm', scope.timepicker.timeFormat),
-                    step = 15,
-                    current = null;
-
-                // TODO: Fix this so that if minTime, maxTime and step changes, we rebuild the list
                 attrs.$observe('dnTimepicker', function(value) {
                     if(!value) return;
 
                     scope.timepicker.timeFormat = value;
 
-                    if(attrs.minTime) {
-                        minTime = $dateParser(attrs.minTime, scope.timepicker.timeFormat);
-                    }
-
-                    if(attrs.maxTime) {
-                        maxTime = $dateParser(attrs.maxTime, scope.timepicker.timeFormat);
-                    }
-
-                    if(attrs.step) {
-                        step = dnTimepickerHelpers.stringToMinutes(attrs.step);
-                    }
-
-                    scope.updateOptionList();
-
                     ngModel.$render();
                 });
 
-                // attrs.$observe('minTime', function(value) {
-                //     if(!value) return;
+                attrs.$observe('minTime', function(value) {
+                    if(!value) return;
 
-                //     minTime = $dateParser(value, scope.timepicker.timeFormat);
-                //     scope.updateOptionList();
-                // });
+                    scope.timepicker.minTime = $dateParser(value, scope.timepicker.timeFormat);
+                    updateList = true;
+                });
 
-                // attrs.$observe('maxTime', function(value) {
-                //     if(!value) return;
+                attrs.$observe('maxTime', function(value) {
+                    if(!value) return;
+                    console.log(value)
+                    scope.timepicker.maxTime = $dateParser(value, scope.timepicker.timeFormat);
+                    updateList = true;
+                });
 
-                //     maxTime = $dateParser(value, scope.timepicker.timeFormat);
-                //     scope.updateOptionList();
-                // });
+                attrs.$observe('step', function(value) {
+                    if(!value) return;
 
-                scope.updateOptionList = function() {
-                    scope.timepicker.optionList = dnTimepickerHelpers.buildOptionList(minTime, maxTime, step);
-                };
+                    scope.timepicker.step = dnTimepickerHelpers.stringToMinutes(value);
+                    updateList = true;
+                });
+
+                // DEPRECATED
+                // scope.updateOptionList = function() {
+                //     scope.timepicker.optionList = dnTimepickerHelpers.buildOptionList(minTime, maxTime, step);
+                // };
                 
 
                 // Select action handler
                 // (int) index
-                scope.select = function(index) {
-                    scope.update(scope.timepicker.optionList[index]);
+                scope.select = function(time) {
+                    console.log(time)
+                    // scope.update(scope.timepicker.optionList[index]);
 
-                    // Closes the timepicker
-                    if (scope.timepicker.isOpen) scope.timepicker.isOpen = false;
-                };
+                    // // Closes the timepicker
+                    // if (scope.timepicker.isOpen) scope.timepicker.isOpen = false;
 
-                // Update the current selected time
-                // (Date) value
-                scope.update = function(value) {
-                    if(!value) return;
+                    if(!angular.isDate(time)) {
+                        return;
+                    }
 
-                    current.setHours(value.getHours());
-                    current.setMinutes(value.getMinutes());
-                    current.setSeconds(value.getSeconds());
+                    current.setHours(time.getHours());
+                    current.setMinutes(time.getMinutes());
+                    current.setSeconds(time.getSeconds());
 
                     ngModel.$setViewValue(current);
                     ngModel.$render();
                 };
+
+                // Update the current selected time
+                // (Date) value
+                // scope.update = function(value) {
+                //     if(!value) return;
+
+                //     current.setHours(value.getHours());
+                //     current.setMinutes(value.getMinutes());
+                //     current.setSeconds(value.getSeconds());
+
+                //     ngModel.$setViewValue(current);
+                //     ngModel.$render();
+                // };
 
                 ngModel.$render = function() {
                     var timeString = angular.isDate(ngModel.$viewValue) ? dateFilter(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
@@ -179,6 +196,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
 
                 // Opens the timepicker
                 scope.openPopup = function() {
+                    //console.log(scope.timepicker.optionList())
                     // Set position
                     scope.position = $position.position(element);
                     scope.position.top = scope.position.top + element.prop('offsetHeight');
@@ -187,7 +205,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     scope.timepicker.isOpen = true;
 
                     // Set active item
-                    scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList);
+                    scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList());
 
                     // Trigger digest
                     scope.$digest();
@@ -221,8 +239,9 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 }
 
                 // Set initial selected item
-                scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList);
-                if (scope.timepicker.activeIdx > -1) scope.select(scope.timepicker.activeIdx);
+                // scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList);
+                // if (scope.timepicker.activeIdx > -1) scope.select(scope.timepicker.activeIdx);
+                current = ngModel.$modelValue;
             }
         };
     }])
@@ -232,8 +251,8 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
             replace: true,
             transclude: false,
             template: '<ul class="dn-timepicker-popup dropdown-menu" ng-style="{display: timepicker.isOpen && \'block\' || \'none\', top: position.top+\'px\', left: position.left+\'px\'}">\
-            <li ng-repeat="time in timepicker.optionList" ng-class="{active: isActive($index) }" ng-mouseenter="setActive($index)" ng-click="select($index)">\
-            <a>{{time | date:timepicker.timeFormat}}</a>\
+            <li ng-repeat="time in timepicker.optionList()" ng-class="{active: isActive($index) }" ng-mouseenter="setActive($index)">\
+            <a ng-click="select(time)">{{time | date:timepicker.timeFormat}}</a>\
             </li>\
             </ul>',
             link: function(scope, element, attrs) {

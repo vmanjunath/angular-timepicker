@@ -62,21 +62,25 @@
 			<h6>Code</h6>
 			<pre class="brush: xml">&lt;input type="text" dn-timepicker="h:mm a" ng-model="models.time" /&gt;</pre>
 
-			<h4>Range</h4>
+			<!-- <h4>Range</h4>
 			<div class="bs-docs-example">
 				<input type="text" dn-timepicker="H:mm" ng-model="models.time2" min-time="9:00" max-time="17:00" step="10m"/>
 				<p>Selected time: {{models.time2 | date:'h:mm a'}}</p>
 			</div>
 			<h6>Code</h6>
 			<pre class="brush: xml">&lt;input type="text" dn-timepicker="H:mm" ng-model="models.time" min-time="9:00" max-time="17:00" step="10m" /&gt;</pre>
-
+			-->
 			<h4>Formatting</h4>
 			<div class="bs-docs-example">
-				<input type="text" dn-timepicker="h:mm a" ng-model="models.time3" min-time="9:00 am" max-time="9:00 pm" step="10m" />
-				<p>Selected time: {{models.time3 | date:'h:mm a'}}</p>
+				<input type="text" dn-timepicker="{{models.format}}" ng-model="models.time3" min-time="{{models.minTime}}" max-time="{{models.maxTime}}" step="{{models.step}}" />
+				<input type="text" ng-model="models.minTime" />
+				<input type="text" ng-model="models.maxTime" />
+				<input type="text" ng-model="models.step" />
+				<input type="text" ng-model="models.format" />
+				<p>Selected time: {{models.time3 | date:'medium'}}</p>
 			</div>
 			<h6>Code</h6>
-			<pre class="brush: xml">&lt;input type="text" dn-timepicker="h:mm a" ng-model="models.time" min-time="9:00 am" max-time="9:00 pm" step="10m" /&gt;</pre>
+			<pre class="brush: xml">&lt;input type="text" dn-timepicker="h:mm a" ng-model="models.time" min-time="{{models.minTime}}" max-time="{{models.maxTime}}" step="{{models.step}}" /&gt;</pre>
 		</div>
 
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
@@ -88,7 +92,11 @@
 				$scope.models = {
 					time1: new Date(),
 					time2: new Date(),
-					time3: new Date()
+					time3: new Date(),
+					format: 'h:mm a',
+					minTime: '9:00 am',
+					maxTime: '9:00 pm',
+					step: '15m'
 				};
 			}
 		</script>
