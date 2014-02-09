@@ -59,12 +59,8 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 var scope = originalScope.$new();
 
                 // Local variables
-                // var minTime = $dateParser('12:00 am', scope.timepicker.timeFormat),
-                //     maxTime = $dateParser('11:59 pm', scope.timepicker.timeFormat),
-                //     step = 15
-                var current = null;
-
-                var list = [],
+                var current = null,
+                    list = [],
                     updateList = true;
 
                 scope.timepicker = {
@@ -85,9 +81,9 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 };
 
                 attrs.$observe('dnTimepicker', function(value) {
-                    if(!value) return;
-
-                    scope.timepicker.timeFormat = value;
+                    if(value) {
+                        scope.timepicker.timeFormat = value;
+                    }
 
                     ngModel.$render();
                 });
@@ -101,7 +97,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
 
                 attrs.$observe('maxTime', function(value) {
                     if(!value) return;
-                    console.log(value)
+
                     scope.timepicker.maxTime = $dateParser(value, scope.timepicker.timeFormat);
                     updateList = true;
                 });
@@ -113,21 +109,8 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     updateList = true;
                 });
 
-                // DEPRECATED
-                // scope.updateOptionList = function() {
-                //     scope.timepicker.optionList = dnTimepickerHelpers.buildOptionList(minTime, maxTime, step);
-                // };
-                
-
                 // Select action handler
-                // (int) index
                 scope.select = function(time) {
-                    console.log(time)
-                    // scope.update(scope.timepicker.optionList[index]);
-
-                    // // Closes the timepicker
-                    // if (scope.timepicker.isOpen) scope.timepicker.isOpen = false;
-
                     if(!angular.isDate(time)) {
                         return;
                     }
@@ -139,19 +122,6 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     ngModel.$setViewValue(current);
                     ngModel.$render();
                 };
-
-                // Update the current selected time
-                // (Date) value
-                // scope.update = function(value) {
-                //     if(!value) return;
-
-                //     current.setHours(value.getHours());
-                //     current.setMinutes(value.getMinutes());
-                //     current.setSeconds(value.getSeconds());
-
-                //     ngModel.$setViewValue(current);
-                //     ngModel.$render();
-                // };
 
                 ngModel.$render = function() {
                     var timeString = angular.isDate(ngModel.$viewValue) ? dateFilter(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
@@ -196,7 +166,6 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
 
                 // Opens the timepicker
                 scope.openPopup = function() {
-                    //console.log(scope.timepicker.optionList())
                     // Set position
                     scope.position = $position.position(element);
                     scope.position.top = scope.position.top + element.prop('offsetHeight');
@@ -239,8 +208,6 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 }
 
                 // Set initial selected item
-                // scope.timepicker.activeIdx = dnTimepickerHelpers.getClosestIndex(ngModel.$modelValue, scope.timepicker.optionList);
-                // if (scope.timepicker.activeIdx > -1) scope.select(scope.timepicker.activeIdx);
                 current = ngModel.$modelValue;
             }
         };

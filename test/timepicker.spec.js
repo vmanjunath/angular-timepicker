@@ -110,8 +110,8 @@ describe('Timepicker directive', function() {
 			$scope.$apply(function() {
 				$scope.models.time = new Date(2012, 11, 15, 13, 30, 0);
 			});
-
-			inputEl.next().find('li')[0].click();
+			
+			inputEl.next().find('li:first-child a').click();
 
 			expect($scope.models.time.getFullYear()).toEqual(2012);
 			expect($scope.models.time.getMonth()).toEqual(11);
