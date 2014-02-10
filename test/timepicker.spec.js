@@ -63,10 +63,14 @@ describe('Timepicker directive', function() {
 
 		beforeEach(inject(function($sniffer) {
 			$scope.models = {
-				time: new Date()
+				time: new Date(),
+				format: 'HH:mm',
+				minTime: '09:00',
+				maxTime: '21:00',
+				step: '15'
 			};
 
-			var wrapElement = $compile(angular.element('<div><input type="text" dn-timepicker="HH:mm" ng-model="models.time"></div>'))($scope);
+			var wrapElement = $compile(angular.element('<div><input type="text" dn-timepicker="{{models.format}}" ng-model="models.time" min-time="{{models.minTime}}" max-time="{{models.maxTime}}" step="{{models.step}}"></div>'))($scope);
             $scope.$digest();
 
             assignElements(wrapElement);
@@ -83,6 +87,19 @@ describe('Timepicker directive', function() {
 
 			expect(list.hasClass('dn-timepicker-popup')).toBe(true);
 			expect(list.children().length > 0).toBe(true);
+		});
+
+		it('should update the list of selectable time', function() {
+			var list = inputEl.next();
+
+			$scope.models.minTime = '07:00';
+			$scope.models.maxTime = '19:00';
+			$scope.models.step = '30';
+			$scope.$apply();
+
+			expect(list.find('li:first-child a').text()).toBe('07:00');
+			expect(list.find('li:nth-child(2) a').text()).toBe('07:30');
+			expect(list.find('li:last-child a').text()).toBe('19:00');
 		});
 
 		it('should be able to parse manually entered time', function() {
@@ -116,7 +133,7 @@ describe('Timepicker directive', function() {
 			expect($scope.models.time.getFullYear()).toEqual(2012);
 			expect($scope.models.time.getMonth()).toEqual(11);
 			expect($scope.models.time.getDate()).toEqual(15);
-			expect($scope.models.time.getHours()).toEqual(0);
+			expect($scope.models.time.getHours()).toEqual(9);
 			expect($scope.models.time.getMinutes()).toEqual(0);
 		});
 	});

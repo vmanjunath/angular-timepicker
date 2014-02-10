@@ -16,7 +16,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 if(!str) return null;
 
                 var t = str.match(/(\d+)(h?)/);
-                return t[1] * (t[2] ? 60 : 1);
+                return t[1] ? t[1] * (t[2] ? 60 : 1) : null;
             },
 
             buildOptionList: function(minTime, maxTime, step) {
@@ -105,7 +105,9 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 attrs.$observe('step', function(value) {
                     if(!value) return;
 
-                    scope.timepicker.step = dnTimepickerHelpers.stringToMinutes(value);
+                    var step = dnTimepickerHelpers.stringToMinutes(value);
+                    if(step) scope.timepicker.step = step;
+                    
                     updateList = true;
                 });
 
