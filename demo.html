@@ -172,6 +172,14 @@
                 </form>
             </div>
             <div class="highlight" ng-non-bindable>
+                <pre class="brush: js">// Model
+$scope.models = {
+    time: new Date(),
+    format: 'h:mm a',
+    minTime: '9:00 am',
+    maxTime: '9:00 pm',
+    step: '15m'
+};</pre>
                 <pre class="brush: xml">&lt;input type="text" dn-timepicker="{{models.format}}" ng-model="models.time" min-time="{{models.minTime}}" max-time="{{models.maxTime}}" step="{{models.step}}" /&gt;</pre>
             </div>
 		</div>
@@ -189,13 +197,14 @@
 					format: 'h:mm a',
 					minTime: '9:00 am',
 					maxTime: '9:00 pm',
-					step: '15m'
+					step: '15'
 				};
 			}
 		</script>
 
-		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.js"></script>
-        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.js"></script>
+		<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js"></script>
         <script type="text/javascript">
 	        SyntaxHighlighter.all();
 	    </script>

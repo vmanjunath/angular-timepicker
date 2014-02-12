@@ -1,5 +1,5 @@
 /* 
- *   Angular Timepicker 1.0.4
+ *   Angular Timepicker 1.0.5
  *   https://github.com/Geta/angular-timepicker
  *
  *   Copyright 2013, Geta AS
