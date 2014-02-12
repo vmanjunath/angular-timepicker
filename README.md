@@ -14,7 +14,7 @@ A simple dropdown style timepicker directive.
 
 Include the timepicker directive file, and attach it to an input field.
 
-    <input type="text" dn-timepicker="h:mm a" min-time="00:00" max-time="23:59" step="15m" ng-model="timepicker.model" />
+    <input type="text" dn-timepicker="h:mm a" min-time="00:00" max-time="23:59" step="15" ng-model="timepicker.model" />
     
 ## Options
 
