@@ -11,6 +11,8 @@
 
 angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
     .factory('dnTimepickerHelpers', function() {
+        'use strict';
+
         return {
             stringToMinutes: function(str) {
                 if(!str) return null;
@@ -51,7 +53,9 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
             }
         }
     })
-    .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', 'dateFilter', '$dateParser', 'dnTimepickerHelpers', function($compile, $parse, $position, $document, dateFilter, $dateParser, dnTimepickerHelpers) {
+    .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', 'dateFilter', '$dateParser', 'dnTimepickerHelpers', '$log', function($compile, $parse, $position, $document, dateFilter, $dateParser, dnTimepickerHelpers, $log) {
+        'use strict';
+
         return {
             restrict: 'A',
             require: '?ngModel',
@@ -63,6 +67,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     list = [],
                     updateList = true;
 
+                // Model
                 scope.timepicker = {
                     element: null,
                     timeFormat: 'h:mm a',
@@ -80,8 +85,20 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     }
                 };
 
+                // Init attribute observers
+
                 attrs.$observe('dnTimepicker', function(value) {
                     if(value) {
+                        scope.timepicker.timeFormat = value;
+                    }
+
+                    ngModel.$render();
+                });
+
+                // Deprecated - but we should still support it for a while
+                attrs.$observe('timeFormat', function(value) {
+                    if(value) {
+                        $log.warn('The time-format attribute is deprecated and will be removed in the next version. Specify time format as value for dn-timepicker attribute.')
                         scope.timepicker.timeFormat = value;
                     }
 
@@ -111,19 +128,7 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     updateList = true;
                 });
 
-                // Select action handler
-                scope.select = function(time) {
-                    if(!angular.isDate(time)) {
-                        return;
-                    }
-
-                    current.setHours(time.getHours());
-                    current.setMinutes(time.getMinutes());
-                    current.setSeconds(time.getSeconds());
-
-                    ngModel.$setViewValue(current);
-                    ngModel.$render();
-                };
+                // Set up renderer and parser
 
                 ngModel.$render = function() {
                     var timeString = angular.isDate(ngModel.$viewValue) ? dateFilter(ngModel.$viewValue, scope.timepicker.timeFormat) : '';
@@ -154,14 +159,28 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 };
                 ngModel.$parsers.unshift(parseDate);
 
+                // Set up methods
+
+                // Select action handler
+                scope.select = function(time) {
+                    if(!angular.isDate(time)) {
+                        return;
+                    }
+
+                    current.setHours(time.getHours());
+                    current.setMinutes(time.getMinutes());
+                    current.setSeconds(time.getSeconds());
+
+                    ngModel.$setViewValue(current);
+                    ngModel.$render();
+                };
+
                 // Checks for current active item
-                // (int) index
                 scope.isActive = function(index) {
                     return index === scope.timepicker.activeIdx;
                 };
 
                 // Sets the current active item
-                // (int) index
                 scope.setActive = function(index) {
                     scope.timepicker.activeIdx = index;
                 };
@@ -188,6 +207,9 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     }
                 };
 
+                // Append timepicker dropdown
+                element.after($compile(angular.element('<div dn-timepicker-popup></div>'))(scope));
+
                 // Set up the element
                 element
                     .bind('focus', function() {
@@ -201,9 +223,6 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     }
                 });
 
-                // Append timepicker dropdown
-                element.after($compile(angular.element('<div dn-timepicker-popup></div>'))(scope));
-
                 // Set initial value
                 if(!angular.isDate(ngModel.$modelValue)) {
                     ngModel.$setViewValue(new Date());
@@ -215,6 +234,8 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
         };
     }])
     .directive('dnTimepickerPopup', [function() {
+        'use strict';
+
         return {
             restrict: 'A',
             replace: true,

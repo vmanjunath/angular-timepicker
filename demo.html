@@ -86,6 +86,7 @@
             <p class="lead">This directive creates a simple dropdown style timepicker, like the one used in Google Calendar.</p>
 
             <h3>Basic</h3>
+            <p>The minimum requirement to start using the time picker is to add the dn-timepicker directive as an attribute to an input field, as well as specifying the model used using the ng-model attribute.</p>
 			<div class="bs-example">
                 <form class="form-horizontal" role="form">
                     <div class="form-group">
@@ -129,6 +130,7 @@
             </div>
 
             <h3>Dynamic Range & Format</h3>
+            <p>You can change the format and range on-the-fly, should you need it, and the directive will take care of updating the view and the list.</p>
             <div class="bs-example">
                 <form class="form-horizontal" role="form">
                     <div class="form-group">
@@ -140,7 +142,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Selected time</label>
                         <div class="col-sm-3">
-                            <input type="text" class="form-control" ng-value="models.time2 | date:'h:mm a'" disabled />
+                            <input type="text" class="form-control" ng-value="models.time3 | date:'h:mm a'" disabled />
                         </div>
                     </div>
 
@@ -178,7 +180,7 @@ $scope.models = {
     format: 'h:mm a',
     minTime: '9:00 am',
     maxTime: '9:00 pm',
-    step: '15m'
+    step: '15'
 };</pre>
                 <pre class="brush: xml">&lt;input type="text" dn-timepicker="{{models.format}}" ng-model="models.time" min-time="{{models.minTime}}" max-time="{{models.maxTime}}" step="{{models.step}}" /&gt;</pre>
             </div>
