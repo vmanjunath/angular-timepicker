@@ -136,5 +136,53 @@ describe('Timepicker directive', function() {
 			expect($scope.models.time.getHours()).toEqual(9);
 			expect($scope.models.time.getMinutes()).toEqual(0);
 		});
+
+		it('should select the next item when DOWN key is pressed', function() {
+			var list = inputEl.next();
+
+			$scope.$apply(function() {
+				$scope.models.time = new Date(2012, 11, 15, 13, 30, 0);
+				$scope.models.minTime = '13:00';
+				$scope.models.maxTime = '14:00';
+				$scope.models.step = '30';
+			});
+
+			inputEl.focus();
+
+			// Initial state
+			expect(list.find('li.active a').text()).toBe('13:30');
+
+			// Keypress DOWN
+			var e = $.Event('keypress');
+			e.which = 40;
+			inputEl.trigger(e);
+
+			// Final state
+			expect(list.find('li.active a').text()).toBe('14:00');
+		});
+
+		it('should select the previous item when UP key is pressed', function() {
+			var list = inputEl.next();
+
+			$scope.$apply(function() {
+				$scope.models.time = new Date(2012, 11, 15, 13, 30, 0);
+				$scope.models.minTime = '13:00';
+				$scope.models.maxTime = '14:00';
+				$scope.models.step = '30';
+			});
+
+			inputEl.focus();
+
+			// Initial state
+			expect(list.find('li.active a').text()).toBe('13:30');
+
+			// Keypress UP
+			var e = $.Event('keypress');
+			e.which = 38;
+			inputEl.trigger(e);
+
+			// Final state
+			expect(list.find('li.active a').text()).toBe('13:00');
+		});
 	});
 });

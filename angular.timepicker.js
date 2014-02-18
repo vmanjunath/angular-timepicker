@@ -185,6 +185,14 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     scope.timepicker.activeIdx = index;
                 };
 
+                // Sets the timepicker scrollbar so that selected item is visible
+                scope.scrollToSelected = function() {
+                    if (scope.timepicker.element && scope.timepicker.activeIdx > -1) {
+                        var target = scope.timepicker.element[0].querySelector('.active');
+                        target.parentNode.scrollTop = target.offsetTop - 50;
+                    }
+                };
+
                 // Opens the timepicker
                 scope.openPopup = function() {
                     // Set position
@@ -201,9 +209,15 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                     scope.$digest();
 
                     // Scroll to selected
-                    if (scope.timepicker.element && scope.timepicker.activeIdx > -1) {
-                        var target = scope.timepicker.element[0].querySelector('.active');
-                        target.parentNode.scrollTop = target.offsetTop;
+                    scope.scrollToSelected();
+                };
+
+                // Closes the timepicker
+                scope.closePopup = function() {
+                    if(scope.timepicker.isOpen) {
+                        scope.timepicker.isOpen = false;
+                        scope.$apply();
+                        element[0].blur();
                     }
                 };
 
@@ -214,12 +228,26 @@ angular.module('dnTimepicker', ['ui.bootstrap.position', 'dateParser'])
                 element
                     .bind('focus', function() {
                         scope.openPopup();
-                    });
+                    })
+                    .bind('keypress keyup', function(e) {
+                        //e.preventDefault();
+
+                        if(e.which === 38 && scope.timepicker.activeIdx > 0) { // UP
+                            scope.timepicker.activeIdx--;
+                            scope.scrollToSelected();
+                        } else if(e.which === 40 && scope.timepicker.activeIdx < scope.timepicker.optionList().length - 1) { // DOWN
+                            scope.timepicker.activeIdx++;
+                            scope.scrollToSelected();
+                        } else if(e.which === 13 && scope.timepicker.activeIdx > -1) { // ENTER
+                            scope.select(scope.timepicker.optionList()[scope.timepicker.activeIdx]);
+                            scope.closePopup();
+                        }
+                        scope.$digest();
+                    })
 
                 $document.bind('click', function(event) {
                     if (scope.timepicker.isOpen && event.target !== element[0]) {
-                        scope.timepicker.isOpen = false;
-                        scope.$apply();
+                        scope.closePopup();
                     }
                 });
 
