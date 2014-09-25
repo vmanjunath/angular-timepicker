@@ -166,6 +166,12 @@ describe('Timepicker directive', function() {
 			});
             
             expect(inputEl.val()).toEqual('20:45');
+            
+            $scope.$apply(function() {
+				$scope.models.time = undefined;
+			});
+            
+            expect(inputEl.val()).toEqual('');
         });
 
 		it('should select the next item when DOWN key is pressed', function() {

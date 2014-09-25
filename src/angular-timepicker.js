@@ -82,11 +82,15 @@
                         };
                         
                         function getUpdatedDate(date) {
-                            if (!current) current = scope.ngModel;
+                            if (!current) {
+                                current = angular.isDate(scope.ngModel) ? scope.ngModel : new Date();
+                            }
 
                             current.setHours(date.getHours());
                             current.setMinutes(date.getMinutes());
                             current.setSeconds(date.getSeconds());
+                            
+                            setCurrentValue(current);
                             
                             return current;
                         }
@@ -106,16 +110,6 @@
 
                         attrs.$observe('dnTimepicker', function (value) {
                             if (value) {
-                                scope.timepicker.timeFormat = value;
-                            }
-
-                            ctrl.$render();
-                        });
-
-                        // Deprecated - but we should still support it for a while
-                        attrs.$observe('timeFormat', function (value) {
-                            if (value) {
-                                $log.warn('The time-format attribute is deprecated and will be removed in the next version. Specify time format as value for dn-timepicker attribute.');
                                 scope.timepicker.timeFormat = value;
                             }
 
@@ -153,7 +147,7 @@
                         // Set up renderer and parser
 
                         ctrl.$render = function () {
-                            element.val(angular.isDate(current) ? dateFilter(current, scope.timepicker.timeFormat) : ctrl.$viewValue);
+                            element.val(angular.isDate(current) ? dateFilter(current, scope.timepicker.timeFormat) : (ctrl.$viewValue ? ctrl.$viewValue : ''));
                         };
 
                         // Parses manually entered time

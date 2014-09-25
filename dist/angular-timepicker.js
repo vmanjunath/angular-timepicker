@@ -1,5 +1,5 @@
 /*!
- * angular-timepicker 1.0.7
+ * angular-timepicker 1.0.8
  * https://github.com/Geta/angular-timepicker
  * Copyright 2014, Geta AS
  * Contributors: Dzulqarnain Nasir <dzul@geta.no>
@@ -66,10 +66,13 @@
                     }
                 };
                 function getUpdatedDate(date) {
-                    if (!current) current = scope.ngModel;
+                    if (!current) {
+                        current = angular.isDate(scope.ngModel) ? scope.ngModel : new Date();
+                    }
                     current.setHours(date.getHours());
                     current.setMinutes(date.getMinutes());
                     current.setSeconds(date.getSeconds());
+                    setCurrentValue(current);
                     return current;
                 }
                 function setCurrentValue(value) {
@@ -83,13 +86,6 @@
                 }
                 attrs.$observe("dnTimepicker", function(value) {
                     if (value) {
-                        scope.timepicker.timeFormat = value;
-                    }
-                    ctrl.$render();
-                });
-                attrs.$observe("timeFormat", function(value) {
-                    if (value) {
-                        $log.warn("The time-format attribute is deprecated and will be removed in the next version. Specify time format as value for dn-timepicker attribute.");
                         scope.timepicker.timeFormat = value;
                     }
                     ctrl.$render();
@@ -115,7 +111,7 @@
                     ctrl.$render();
                 });
                 ctrl.$render = function() {
-                    element.val(angular.isDate(current) ? dateFilter(current, scope.timepicker.timeFormat) : ctrl.$viewValue);
+                    element.val(angular.isDate(current) ? dateFilter(current, scope.timepicker.timeFormat) : ctrl.$viewValue ? ctrl.$viewValue : "");
                 };
                 ctrl.$parsers.unshift(function(viewValue) {
                     var date = angular.isDate(viewValue) ? viewValue : $dateParser(viewValue, scope.timepicker.timeFormat);
