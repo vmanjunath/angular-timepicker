@@ -19,7 +19,7 @@ module.exports = function(config) {
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/angular-ui-bootstrap/src/position/position.js',
       'bower_components/angular-dateparser/dist/angular-dateparser.js',
-      'src/angular.timepicker.js',
+      'src/angular-timepicker.js',
       'test/**/*.js'
     ],
 

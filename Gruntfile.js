@@ -26,7 +26,7 @@ module.exports = function (grunt) {
           banner: ['/*!', ' * <%= pkg.name %> <%= pkg.version %>', ' * <%= pkg.homepage %>', ' * Copyright <%= grunt.template.today("yyyy") %>, <%= pkg.author.name %>', ' * Contributors: <%= pkg.contributors %>', ' * Licensed under: <%= pkg.licenses.type %> (<%= pkg.licenses.url %>)\n */\n\n'].join('\n')
         },
         files: {
-          'dist/angular-timepicker.js': ['src/angular.timepicker.js']
+          'dist/angular-timepicker.js': ['src/angular-timepicker.js']
         }
       },
       prod: {
