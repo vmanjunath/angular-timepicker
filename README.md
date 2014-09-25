@@ -2,8 +2,6 @@
 
 A simple dropdown style timepicker directive.
 
-[Demo](http://www.dnasir.com/github/angular-timepicker/demo.html)
-
 ## Prerequisites
 
 1. [Angular 1.2.0+](http://angularjs.org)
@@ -26,9 +24,9 @@ The format to use when displaying the time in the input box and the dropdown lis
 
 <sub>Added: 1.0.5</sub>
 
-#### ng-model (Date)
+#### ng-model (Date|string)
 
-The model that the timepicker is bound to. If no model is given, it will create a new one.
+The model that the timepicker is bound to. If no model is given, it will create a new one. The timepicker also accepts a time string, provided it follows the defined format.
 
     Default value: new Date()
 
