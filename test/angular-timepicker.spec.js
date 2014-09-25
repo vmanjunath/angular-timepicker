@@ -107,6 +107,21 @@ describe('Timepicker directive', function() {
 
 			expect($scope.models.time.getHours()).toEqual(12);
 			expect($scope.models.time.getMinutes()).toEqual(50);
+
+            // not a time string
+            changeInputValueTo(inputEl, 'not a time string');
+
+            expect($scope.models.time).toBeUndefined();
+
+            // incorrect format
+            changeInputValueTo(inputEl, '1:45 pm');
+
+            expect($scope.models.time).toBeUndefined();
+
+            // invalid time
+            changeInputValueTo(inputEl, '25:69');
+
+            expect($scope.models.time).toBeUndefined();
 		});
 
 		it('should only update the time properties of the model - manual', function() {
@@ -136,6 +151,22 @@ describe('Timepicker directive', function() {
 			expect($scope.models.time.getHours()).toEqual(9);
 			expect($scope.models.time.getMinutes()).toEqual(0);
 		});
+        
+        it('should update the view when model is manually changed', function() {
+            var ngModelController = inputEl.controller('ngModel');
+            
+            $scope.$apply(function() {
+				$scope.models.time = new Date(2012, 11, 15, 13, 30, 0);
+			});
+            
+            expect(inputEl.val()).toEqual('13:30');
+            
+            $scope.$apply(function() {
+				$scope.models.time = '20:45';
+			});
+            
+            expect(inputEl.val()).toEqual('20:45');
+        });
 
 		it('should select the next item when DOWN key is pressed', function() {
 			var list = inputEl.next();

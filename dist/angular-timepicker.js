@@ -65,6 +65,22 @@
                         return list;
                     }
                 };
+                function getUpdatedDate(date) {
+                    if (!current) current = scope.ngModel;
+                    current.setHours(date.getHours());
+                    current.setMinutes(date.getMinutes());
+                    current.setSeconds(date.getSeconds());
+                    return current;
+                }
+                function setCurrentValue(value) {
+                    if (!angular.isDate(value)) {
+                        value = $dateParser(scope.ngModel, scope.timepicker.timeFormat);
+                        if (isNaN(value)) {
+                            $log.warn("Failed to parse model.");
+                        }
+                    }
+                    current = value;
+                }
                 attrs.$observe("dnTimepicker", function(value) {
                     if (value) {
                         scope.timepicker.timeFormat = value;
@@ -95,7 +111,8 @@
                     updateList = true;
                 });
                 scope.$watch("ngModel", function(value) {
-                    if (angular.isDate(value)) current = value;
+                    setCurrentValue(value);
+                    ctrl.$render();
                 });
                 ctrl.$render = function() {
                     element.val(angular.isDate(current) ? dateFilter(current, scope.timepicker.timeFormat) : ctrl.$viewValue);
@@ -107,21 +124,13 @@
                         return undefined;
                     }
                     ctrl.$setValidity("time", true);
-                    if (!current) current = scope.ngModel;
-                    current.setHours(date.getHours());
-                    current.setMinutes(date.getMinutes());
-                    current.setSeconds(date.getSeconds());
-                    return current;
+                    return getUpdatedDate(date);
                 });
                 scope.select = function(time) {
                     if (!angular.isDate(time)) {
                         return;
                     }
-                    if (!current) current = scope.ngModel;
-                    current.setHours(time.getHours());
-                    current.setMinutes(time.getMinutes());
-                    current.setSeconds(time.getSeconds());
-                    ctrl.$setViewValue(current);
+                    ctrl.$setViewValue(getUpdatedDate(time));
                     ctrl.$render();
                 };
                 scope.isActive = function(index) {
@@ -172,15 +181,7 @@
                         scope.closePopup();
                     }
                 });
-                if (!angular.isDate(scope.ngModel)) {
-                    var date = $dateParser(scope.ngModel, scope.timepicker.timeFormat);
-                    if (!isNaN(date)) {
-                        scope.ngModel = date;
-                    } else {
-                        $log.warn("Failed to parse model.");
-                    }
-                }
-                current = scope.ngModel;
+                setCurrentValue(scope.ngModel);
             }
         };
     } ]).directive("dnTimepickerPopup", function() {

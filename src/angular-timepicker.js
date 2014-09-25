@@ -80,6 +80,27 @@
                                 return list;
                             }
                         };
+                        
+                        function getUpdatedDate(date) {
+                            if (!current) current = scope.ngModel;
+
+                            current.setHours(date.getHours());
+                            current.setMinutes(date.getMinutes());
+                            current.setSeconds(date.getSeconds());
+                            
+                            return current;
+                        }
+                        
+                        function setCurrentValue(value) {
+                            if (!angular.isDate(value)) {
+                                value = $dateParser(scope.ngModel, scope.timepicker.timeFormat);
+                                if (isNaN(value)) {
+                                    $log.warn('Failed to parse model.');
+                                }
+                            }
+                            
+                            current = value;
+                        }
 
                         // Init attribute observers
 
@@ -125,7 +146,8 @@
                         });
 
                         scope.$watch('ngModel', function (value) {
-                            if (angular.isDate(value)) current = value;
+                            setCurrentValue(value);
+                            ctrl.$render();
                         });
 
                         // Set up renderer and parser
@@ -145,13 +167,7 @@
 
                             ctrl.$setValidity('time', true);
 
-                            if (!current) current = scope.ngModel;
-
-                            current.setHours(date.getHours());
-                            current.setMinutes(date.getMinutes());
-                            current.setSeconds(date.getSeconds());
-
-                            return current;
+                            return getUpdatedDate(date);
                         });
 
                         // Set up methods
@@ -162,13 +178,7 @@
                                 return;
                             }
 
-                            if (!current) current = scope.ngModel;
-
-                            current.setHours(time.getHours());
-                            current.setMinutes(time.getMinutes());
-                            current.setSeconds(time.getSeconds());
-
-                            ctrl.$setViewValue(current);
+                            ctrl.$setViewValue(getUpdatedDate(time));
                             ctrl.$render();
                         };
 
@@ -227,8 +237,6 @@
                                 scope.openPopup();
                             })
                             .bind('keypress keyup', function (e) {
-                                //e.preventDefault();
-
                                 if (e.which === 38 && scope.timepicker.activeIdx > 0) { // UP
                                     scope.timepicker.activeIdx--;
                                     scope.scrollToSelected();
@@ -242,6 +250,7 @@
                                 scope.$digest();
                             });
 
+                        // Close popup when clicked anywhere else in document
                         $document.bind('click', function (event) {
                             if (scope.timepicker.isOpen && event.target !== element[0]) {
                                 scope.closePopup();
@@ -249,17 +258,7 @@
                         });
 
                         // Set initial value
-                        if (!angular.isDate(scope.ngModel)) {
-                            var date = $dateParser(scope.ngModel, scope.timepicker.timeFormat);
-                            if (!isNaN(date)) {
-                                scope.ngModel = date;
-                            } else {
-                                $log.warn('Failed to parse model.');
-                            }
-                        }
-
-                        // Set initial selected item
-                        current = scope.ngModel;
+                        setCurrentValue(scope.ngModel);
                     }
                 };
         }])
