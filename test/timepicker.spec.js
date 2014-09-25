@@ -146,9 +146,9 @@ describe('Timepicker directive', function() {
 				$scope.models.maxTime = '14:00';
 				$scope.models.step = '30';
 			});
-
-			inputEl.focus();
-
+            
+			inputEl.triggerHandler('focus');
+          
 			// Initial state
 			expect(list.find('li.active a').text()).toBe('13:30');
 
@@ -171,7 +171,7 @@ describe('Timepicker directive', function() {
 				$scope.models.step = '30';
 			});
 
-			inputEl.focus();
+			inputEl.triggerHandler('focus');
 
 			// Initial state
 			expect(list.find('li.active a').text()).toBe('13:30');
