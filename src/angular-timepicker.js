@@ -49,8 +49,8 @@
                 }
             };
         })
-        .directive('dnTimepicker', ['$compile', '$parse', '$position', '$document', 'dateFilter', '$dateParser', 'dnTimepickerHelpers', '$log',
-            function ($compile, $parse, $position, $document, dateFilter, $dateParser, dnTimepickerHelpers, $log) {
+        .directive('dnTimepicker', ['$compile', '$parse', '$uibPosition', '$document', 'dateFilter', '$dateParser', 'dnTimepickerHelpers', '$log',
+            function ($compile, $parse, $uibPosition, $document, dateFilter, $dateParser, dnTimepickerHelpers, $log) {
                 return {
                     restrict: 'A',
                     require: 'ngModel',
@@ -197,7 +197,7 @@
                         // Opens the timepicker
                         scope.openPopup = function () {
                             // Set position
-                            scope.position = $position.position(element);
+                            scope.position = $uibPosition.position(element);
                             scope.position.top = scope.position.top + element.prop('offsetHeight');
 
                             // Open list
